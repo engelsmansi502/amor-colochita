@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi Colochita 🌻</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="hearts"></div>
+
+    <main class="card">
+        <div class="top-line">🌻 UNA SORPRESA PARA MI COLOCHITA 🌻</div>
+
+        <section class="garden" aria-label="Flores amarillas">
+            <span class="flower f1">🌻</span>
+            <span class="flower f2">🌻</span>
+            <span class="flower f3">🌻</span>
+            <span class="flower f4">🌻</span>
+            <span class="flower f5">🌻</span>
+        </section>
+
+        <p class="eyebrow">Para ti, mi Colochita 💛</p>
+        <h1>Un detalle pequeño para una personita muy especial ✨</h1>
+
+        <p class="intro">
+            Colochita, hice esta pequeña página pensando en ti,
+            con la ilusión de regalarte una sonrisa y recordarte
+            lo mucho que significas para mí.
+        </p>
+
+        <button class="primary" onclick="openLetter()">Abrir mi cartita 💌</button>
+        <button class="secondary" onclick="toggleMusic()" id="musicButton">
+            ♫ Activar melodía romántica
+        </button>
+        <a class="song-link" href="https://www.youtube.com/results?search_query=Zo%C3%A9+Labios+Rotos" target="_blank" rel="noopener">
+            🎵 Escuchar “Labios Rotos” de Zoé
+        </a>
+
+        <section id="letter" class="letter hidden">
+            <div class="letter-top">Para mi Colochita, con mucho cariño 🌻</div>
+
+            <p>
+                Mi Colochita, quería darte un detalle diferente, algo sencillo
+                pero hecho con mucho cariño, para que cuando lo veas recuerdes
+                que eres muy especial para mí.
+            </p>
+
+            <p>
+                Ojalá estas flores amarillas te llenen un poquito el día de luz,
+                así como tú puedes llenar de momentos bonitos mi vida. Me gusta
+                saber que existes y que puedo compartir contigo pedacitos de
+                mi mundo.
+            </p>
+
+            <p>
+                No siempre encuentro las palabras perfectas para decirte todo
+                lo que siento, pero quiero que sepas que te tengo mucho cariño
+                y que deseo verte sonreír, sentirte querida y recordar lo
+                valiosa que eres.
+            </p>
+
+            <p class="final-line">
+                Esta flor amarilla es para ti, Colochita. Gracias por ser tú. 💛🌻
+            </p>
+
+            <div class="signature">Con cariño, Engels ❤️</div>
+        </section>
+
+        <p class="closing">Que nunca te falten motivos para sonreír ✨</p>
+    </main>
+
+    <script>
+        let audioContext;
+        let musicPlaying = false;
+        let musicTimer;
+
+        function openLetter() {
+            const letter = document.getElementById("letter");
+            letter.classList.toggle("hidden");
+            if (!letter.classList.contains("hidden")) {
+                createHearts(24);
+            }
+        }
+
+        function createHearts(amount = 10) {
+            const container = document.getElementById("hearts");
+            for (let i = 0; i < amount; i++) {
+                const heart = document.createElement("span");
+                heart.className = "heart";
+                heart.textContent = ["💛", "❤️", "✨", "🌻"][Math.floor(Math.random() * 4)];
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+                heart.style.animationDelay = (Math.random() * 1.5) + "s";
+                container.appendChild(heart);
+                setTimeout(() => heart.remove(), 8500);
+            }
+        }
+
+        function toggleMusic() {
+            const button = document.getElementById("musicButton");
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (musicPlaying) {
+                clearInterval(musicTimer);
+                musicPlaying = false;
+                button.textContent = "♫ Activar melodía romántica";
+                return;
+            }
+
+            musicPlaying = true;
+            button.textContent = "♫ Pausar melodía romántica";
+            playNote();
+            musicTimer = setInterval(playNote, 900);
+        }
+
+        function playNote() {
+            if (!audioContext || !musicPlaying) return;
+            const notes = [261.63, 329.63, 392.00, 329.63, 293.66, 349.23, 440.00, 349.23];
+            const frequency = notes[Math.floor(Math.random() * notes.length)];
+            const oscillator = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+
+            oscillator.type = "sine";
+            oscillator.frequency.value = frequency;
+            gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.08, audioContext.currentTime + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.75);
+
+            oscillator.connect(gain);
+            gain.connect(audioContext.destination);
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.8);
+        }
+    </script>
+</body>
+</html>
